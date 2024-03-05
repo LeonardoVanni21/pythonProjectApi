@@ -1,0 +1,11 @@
+version: "3.5"
+
+services:
+  main:
+    container_name: pythonproject-main
+    hostname: pythonproject-main
+    image: leonardovanni21/pythonproject-main
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app/:z

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from pydantic import BaseModel
 from starlette.responses import HTMLResponse
 
@@ -90,3 +91,28 @@ async def read_car_html(car_id: int):
     return HTMLResponse(
         content=f"<html><body><h1>{cars[car_id].name} - {cars[car_id].model} - {cars[car_id].year} - {cars[car_id].color} - {cars[car_id].price}</h1></body></html>",
         status_code=200)
+
+
+client = TestClient(app)
+
+def test_read_car():
+    response = client.get("/cars/1")
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 1,
+        "name": "Fuscão Preto",
+        "model": "Fusca",
+        "year": 1970,
+        "color": "Preto",
+        "price": 10000.0
+    }
+
+def test_delete_car():
+    response = client.delete("/cars/1")
+    assert response.status_code == 200
+    assert response.json() == {"message": "Carro deletado com sucesso"}
+
+    response = client.get("/cars/1")
+    assert response.status_code == 200
+    assert response.json() == {"error": "Carro inexistente"}
+
